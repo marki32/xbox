@@ -27,7 +27,6 @@
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.6);
     --border-subtle: rgba(255, 255, 255, 0.1);
-    --glow-intensity: 0.5;
 }
 
 body {
@@ -121,7 +120,6 @@ body {
     background: var(--bg-card);
     backdrop-filter: blur(10px);
     border: 1px solid var(--border-subtle);
-    transition: all 0.15s ease;
 }
 
 .trigger {
@@ -141,7 +139,7 @@ body {
     background: rgba(255, 255, 255, 0.2);
 }
 
-/* LT/RT Specific Styling */
+/* LT/RT Specific */
 .lt,
 .rt {
     background: linear-gradient(180deg, rgba(40, 40, 50, 0.9) 0%, rgba(20, 20, 30, 0.9) 100%);
@@ -171,7 +169,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.15s ease;
 }
 
 .menu-btn svg {
@@ -231,11 +228,8 @@ body {
     border-radius: 50%;
     background: radial-gradient(circle at 30% 30%, rgba(60, 60, 70, 0.8) 0%, rgba(20, 20, 30, 0.9) 100%);
     border: 2px solid rgba(255, 255, 255, 0.15);
-    box-shadow:
-        inset 0 2px 10px rgba(0, 0, 0, 0.5),
-        0 0 30px rgba(16, 124, 16, 0.2);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5), 0 0 30px rgba(16, 124, 16, 0.2);
     position: relative;
-    /* Changed from flex for absolute positioning */
 }
 
 #joystick-stick {
@@ -248,10 +242,7 @@ body {
     border-radius: 50%;
     background: radial-gradient(circle at 40% 40%, #555 0%, #222 100%);
     border: 2px solid #444;
-    box-shadow:
-        0 4px 15px rgba(0, 0, 0, 0.6),
-        inset 0 1px 2px rgba(255, 255, 255, 0.1);
-    /* Remove transition for instant response */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.1);
 }
 
 /* Stick Click Buttons */
@@ -292,7 +283,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* No transition for instant response */
 }
 
 .dpad-btn svg {
@@ -366,12 +356,11 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    /* No transition for instant response */
     background: rgba(20, 20, 30, 0.9);
     backdrop-filter: blur(5px);
 }
 
-/* Xbox Official Button Colors with Glow */
+/* Xbox Official Button Colors */
 .face-btn.y {
     grid-area: y;
     color: var(--btn-y);
@@ -488,7 +477,103 @@ body {
 }
 
 /* ================================================
-   RESPONSIVE ADJUSTMENTS
+   DRIVE MODE
+   ================================================ */
+
+/* Mode Toggle Button */
+.mode-toggle-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 2px solid var(--xbox-green);
+    color: white;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    box-shadow: 0 0 15px rgba(16, 124, 16, 0.4);
+}
+
+.mode-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.mode-toggle-btn.drive-active {
+    border-color: #ff9900;
+    box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+    background: rgba(255, 153, 0, 0.2);
+}
+
+.mode-icon {
+    display: block;
+}
+
+.mode-toggle-btn.drive-active .mode-icon.walk {
+    display: none;
+}
+
+.mode-toggle-btn.drive-active .mode-icon.drive {
+    display: block !important;
+}
+
+/* Drive Controls */
+.drive-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.steer-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(40, 40, 50, 0.9) 0%, rgba(20, 20, 30, 0.95) 100%);
+    border: 3px solid rgba(255, 153, 0, 0.5);
+    color: #ff9900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    box-shadow: 0 0 20px rgba(255, 153, 0, 0.2);
+}
+
+.steer-btn:active,
+.steer-btn.pressed {
+    transform: scale(0.95);
+    background: rgba(255, 153, 0, 0.4);
+    border-color: #ff9900;
+    box-shadow: 0 0 30px rgba(255, 153, 0, 0.6);
+}
+
+.steer-arrow {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.steer-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* Drive Mode Body Theme */
+body.drive-mode {
+    background: linear-gradient(145deg, #0a0a0f 0%, #1a0f0a 50%, #0a0a0f 100%);
+}
+
+body.drive-mode .lt.pressed,
+body.drive-mode .rt.pressed {
+    box-shadow: 0 0 25px rgba(255, 153, 0, 0.6);
+}
+
+/* ================================================
+   RESPONSIVE
    ================================================ */
 @media (max-height: 400px) {
     .top-bar {
@@ -532,270 +617,4 @@ body {
         height: 48px;
         font-size: 18px;
     }
-}
-
-/* ================================================
-   DRIVE MODE - STEERING CONTROLS
-   ================================================ */
-
-/* Mode Toggle Button */
-.mode-toggle-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 2px solid var(--xbox-green);
-    color: white;
-    font-size: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 100;
-    transition: all 0.3s ease;
-    box-shadow: 0 0 15px rgba(16, 124, 16, 0.4);
-}
-
-.mode-toggle-btn:active {
-    transform: scale(0.95);
-}
-
-.mode-toggle-btn.drive-active {
-    border-color: #ff9900;
-    box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
-    background: rgba(255, 153, 0, 0.2);
-}
-
-.mode-icon {
-    display: block;
-}
-
-.mode-toggle-btn.drive-active .mode-icon.walk {
-    display: none;
-}
-
-.mode-toggle-btn.drive-active .mode-icon.drive {
-    display: block !important;
-}
-
-/* Steering Container */
-.steering-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-/* Drive Controls - Simple LEFT/RIGHT Buttons */
-.drive-controls {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.steer-btn {
-    width: 90px;
-    height: 90px;
-    border-radius: 20px;
-    background: linear-gradient(145deg, rgba(40, 40, 50, 0.9) 0%, rgba(20, 20, 30, 0.95) 100%);
-    border: 3px solid rgba(255, 153, 0, 0.5);
-    color: #ff9900;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 5px;
-    transition: all 0.1s ease;
-    box-shadow: 0 0 20px rgba(255, 153, 0, 0.2);
-}
-
-.steer-btn:active,
-.steer-btn.pressed {
-    transform: scale(0.95);
-    background: rgba(255, 153, 0, 0.4);
-    border-color: #ff9900;
-    box-shadow: 0 0 30px rgba(255, 153, 0, 0.6);
-}
-
-.steer-arrow {
-    font-size: 32px;
-    line-height: 1;
-}
-
-.steer-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-.steering-bar {
-    width: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-}
-
-/* Drive Mode Body Theme */
-body.drive-mode {
-    background: linear-gradient(145deg, #0a0a0f 0%, #1a0f0a 50%, #0a0a0f 100%);
-}
-
-body.drive-mode .lt.pressed,
-body.drive-mode .rt.pressed {
-    box-shadow: 0 0 25px rgba(255, 153, 0, 0.6);
-}
-
-/* ================================================
-   AIM CROSSHAIR
-   ================================================ */
-.aim-crosshair {
-    position: absolute;
-    width: 60px;
-    height: 60px;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 50;
-    transition: opacity 0.15s ease;
-    filter: drop-shadow(0 0 5px rgba(255, 68, 68, 0.8));
-}
-
-.aim-crosshair.active {
-    opacity: 1;
-}
-
-.aim-crosshair svg {
-    width: 100%;
-    height: 100%;
-}
-
-/* ================================================
-   SETTINGS BUTTON & PANEL
-   ================================================ */
-.settings-btn {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 1px solid var(--border-subtle);
-    font-size: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 200;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.settings-btn:active {
-    transform: scale(0.95);
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.settings-panel {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    max-width: 90vw;
-    background: rgba(15, 15, 25, 0.98);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    border-radius: 16px;
-    z-index: 500;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
-}
-
-.settings-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background: rgba(16, 124, 16, 0.2);
-    border-bottom: 1px solid var(--border-subtle);
-}
-
-.settings-header span {
-    font-weight: 700;
-    font-size: 16px;
-}
-
-.settings-header button {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    opacity: 0.7;
-}
-
-.settings-header button:hover {
-    opacity: 1;
-}
-
-.settings-content {
-    padding: 20px;
-}
-
-.setting-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    padding-bottom: 15px;
-    border-bottom: 1px solid var(--border-subtle);
-}
-
-.setting-item:last-of-type {
-    border-bottom: none;
-}
-
-.setting-item label {
-    font-size: 14px;
-    color: var(--text-secondary);
-    flex: 1;
-}
-
-.setting-item input[type="range"] {
-    width: 100px;
-    margin: 0 10px;
-    accent-color: var(--xbox-green);
-}
-
-.setting-item input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: var(--xbox-green);
-}
-
-.setting-item span {
-    min-width: 50px;
-    text-align: right;
-    font-size: 12px;
-    color: var(--xbox-green);
-    font-weight: 600;
-}
-
-.reset-btn {
-    width: 100%;
-    padding: 12px;
-    background: rgba(232, 17, 35, 0.2);
-    border: 1px solid rgba(232, 17, 35, 0.3);
-    color: #ff6b6b;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: all 0.2s ease;
-}
-
-.reset-btn:active {
-    background: rgba(232, 17, 35, 0.4);
 }
