@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Xbox Cloud Controller</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+
+<body>
+    <!-- Landscape Warning -->
+    <div id="landscape-warning">
+        <div class="rotate-icon">📱</div>
+        <p>Rotate to Landscape Mode</p>
+    </div>
+
+    <!-- Controller Container -->
+    <div id="controller">
+
+        <!-- TOP BAR: Triggers & Status -->
+        <div class="top-bar">
+            <div class="trigger-group left">
+                <button class="trigger lt" data-key="lt">LT</button>
+                <button class="bumper lb" data-key="lb">LB</button>
+            </div>
+
+            <div class="center-status">
+                <button class="menu-btn" data-key="view">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7" />
+                        <rect x="14" y="3" width="7" height="7" />
+                        <rect x="3" y="14" width="7" height="7" />
+                        <rect x="14" y="14" width="7" height="7" />
+                    </svg>
+                </button>
+
+                <div class="xbox-btn">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="12" r="11" stroke="currentColor" stroke-width="1" fill="none" />
+                        <text x="12" y="16" text-anchor="middle" font-size="10" font-weight="bold"
+                            fill="currentColor">X</text>
+                    </svg>
+                </div>
+
+                <button class="menu-btn" data-key="menu">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="4" y1="6" x2="20" y2="6" />
+                        <line x1="4" y1="12" x2="20" y2="12" />
+                        <line x1="4" y1="18" x2="20" y2="18" />
+                    </svg>
+                </button>
+            </div>
+
+            <div class="trigger-group right">
+                <button class="bumper rb" data-key="rb">RB</button>
+                <button class="trigger rt" data-key="rt">RT</button>
+            </div>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="main-area">
+
+            <!-- LEFT SIDE: Joystick + D-Pad -->
+            <div class="left-zone" id="left-zone">
+                <!-- Mode Toggle Button -->
+                <button id="mode-toggle" class="mode-toggle-btn" onclick="toggleDriveMode()">
+                    <span class="mode-icon walk">🚶</span>
+                    <span class="mode-icon drive" style="display:none">🚗</span>
+                </button>
+
+                <!-- Virtual Joystick (Walk Mode) -->
+                <div class="joystick-container" id="joystick-container">
+                    <div id="joystick-base">
+                        <div id="joystick-stick"></div>
+                    </div>
+                    <button class="stick-click l3" data-key="l3">L3</button>
+                </div>
+
+                <!-- Drive Mode Controls (Hidden by Default) -->
+                <div class="drive-controls" id="drive-controls" style="display:none">
+                    <button class="steer-btn steer-left" id="steer-left">
+                        <span class="steer-arrow">◀</span>
+                        <span class="steer-label">LEFT</span>
+                    </button>
+                    <button class="steer-btn steer-right" id="steer-right">
+                        <span class="steer-arrow">▶</span>
+                        <span class="steer-label">RIGHT</span>
+                    </button>
+                    <button class="stick-click l3" data-key="l3">🔊</button>
+                </div>
+
+                <!-- D-Pad -->
+                <div class="dpad">
+                    <button class="dpad-btn up" data-key="up">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4l-8 8h16z" />
+                        </svg>
+                    </button>
+                    <button class="dpad-btn left" data-key="left">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 12l8-8v16z" />
+                        </svg>
+                    </button>
+                    <div class="dpad-center"></div>
+                    <button class="dpad-btn right" data-key="right">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M20 12l-8-8v16z" />
+                        </svg>
+                    </button>
+                    <button class="dpad-btn down" data-key="down">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 20l8-8H4z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT SIDE: Face Buttons + Aim Zone -->
+            <div class="right-zone" id="right-zone">
+                <!-- Face Buttons Diamond -->
+                <div class="face-buttons">
+                    <button class="face-btn y" data-key="y">
+                        <span>Y</span>
+                    </button>
+                    <button class="face-btn x" data-key="x">
+                        <span>X</span>
+                    </button>
+                    <button class="face-btn b" data-key="b">
+                        <span>B</span>
+                    </button>
+                    <button class="face-btn a" data-key="a">
+                        <span>A</span>
+                    </button>
+                </div>
+
+                <!-- R3 Button -->
+                <button class="stick-click r3" data-key="r3">R3</button>
+
+                <!-- Aim Hint -->
+                <div class="aim-hint">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <circle cx="12" cy="12" r="3" />
+                        <line x1="12" y1="2" x2="12" y2="6" />
+                        <line x1="12" y1="18" x2="12" y2="22" />
+                        <line x1="2" y1="12" x2="6" y2="12" />
+                        <line x1="18" y1="12" x2="22" y2="12" />
+                    </svg>
+                    <span>Drag to Aim</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="status">Connecting...</div>
+    </div>
+
+    <script src="touch.js"></script>
+</body>
+
+</html>
