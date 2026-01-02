@@ -3,39 +3,44 @@ const app = express();
 const http = require('http').createServer(app);
 const io = require('socket.io')(http, {
     cors: {
-        origin: "*", // Allow connection from anywhere
+        origin: "*",
         methods: ["GET", "POST"]
-    }
+    },
+    // LOW LATENCY SETTINGS
+    pingTimeout: 5000,
+    pingInterval: 1000,
+    transports: ['websocket'], // Skip polling, go straight to websocket
+    allowUpgrades: false
 });
+const ip = require('ip');
 
-// Serve static files from 'public' directory
+// Serve static files
 app.use(express.static('public'));
 
-// Health check endpoint for Render
-app.get('/health', (req, res) => {
-    res.status(200).send('OK');
-});
+// Health check
+app.get('/health', (req, res) => res.status(200).send('OK'));
 
-// Socket.io handling
+// Socket.io - FAST relay
 io.on('connection', (socket) => {
-    console.log('Client connected:', socket.id);
+    console.log('✅ Client connected:', socket.id);
 
-    // Relay input events from Phone to Extension
+    // Instant relay - no processing delay
     socket.on('input', (data) => {
-        // Broadcast to all other clients (which includes the Extension)
-        socket.broadcast.emit('mobile-input', data);
+        socket.broadcast.volatile.emit('mobile-input', data);
     });
 
     socket.on('disconnect', () => {
-        console.log('Client disconnected:', socket.id);
+        console.log('❌ Client disconnected:', socket.id);
     });
 });
 
-// Use environment PORT for cloud deployment, fallback to 3000 for local
 const PORT = process.env.PORT || 3000;
+const IP_ADDRESS = ip.address();
 
 http.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n=== XBOX MOBILE CONTROLLER SERVER ===`);
-    console.log(`Server running on port: ${PORT}`);
-    console.log(`=====================================\n`);
+    console.log(`\n╔════════════════════════════════════════╗`);
+    console.log(`║   XBOX MOBILE CONTROLLER - FAST MODE   ║`);
+    console.log(`╠════════════════════════════════════════╣`);
+    console.log(`║  Open on PHONE: http://${IP_ADDRESS}:${PORT}`);
+    console.log(`╚════════════════════════════════════════╝\n`);
 });
