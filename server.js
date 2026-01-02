@@ -6,27 +6,24 @@ const io = require('socket.io')(http, {
         origin: "*",
         methods: ["GET", "POST"]
     },
-    // LOW LATENCY SETTINGS
-    pingTimeout: 5000,
-    pingInterval: 1000,
-    transports: ['websocket'], // Skip polling, go straight to websocket
-    allowUpgrades: false
+    // Cloud-compatible settings
+    pingTimeout: 60000,
+    pingInterval: 25000
 });
-const ip = require('ip');
 
 // Serve static files
 app.use(express.static('public'));
 
-// Health check
+// Health check for Render
 app.get('/health', (req, res) => res.status(200).send('OK'));
 
-// Socket.io - FAST relay
+// Socket.io - Fast relay
 io.on('connection', (socket) => {
     console.log('✅ Client connected:', socket.id);
 
-    // Instant relay - no processing delay
+    // Instant relay
     socket.on('input', (data) => {
-        socket.broadcast.volatile.emit('mobile-input', data);
+        socket.broadcast.emit('mobile-input', data);
     });
 
     socket.on('disconnect', () => {
@@ -35,12 +32,7 @@ io.on('connection', (socket) => {
 });
 
 const PORT = process.env.PORT || 3000;
-const IP_ADDRESS = ip.address();
 
 http.listen(PORT, '0.0.0.0', () => {
-    console.log(`\n╔════════════════════════════════════════╗`);
-    console.log(`║   XBOX MOBILE CONTROLLER - FAST MODE   ║`);
-    console.log(`╠════════════════════════════════════════╣`);
-    console.log(`║  Open on PHONE: http://${IP_ADDRESS}:${PORT}`);
-    console.log(`╚════════════════════════════════════════╝\n`);
+    console.log(`Server running on port ${PORT}`);
 });

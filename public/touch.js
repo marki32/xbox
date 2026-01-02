@@ -1,15 +1,11 @@
-// LOW LATENCY socket connection
-const socket = io({
-    transports: ['websocket'],
-    upgrade: false
-});
+const socket = io();
 
 const statusDiv = document.getElementById('status');
 const joystickStick = document.getElementById('joystick-stick');
 const joystickBase = document.getElementById('joystick-base');
 
 socket.on('connect', () => {
-    statusDiv.textContent = 'Connected ✅ FAST';
+    statusDiv.textContent = 'Connected ✅';
     statusDiv.style.background = 'rgba(16, 124, 16, 0.3)';
     statusDiv.style.borderColor = 'rgba(16, 124, 16, 0.5)';
 });
@@ -27,9 +23,9 @@ const inputState = {
     buttons: {}
 };
 
-// Emit state INSTANTLY (volatile = no buffering, no retry)
+// Emit state to server
 function emitState() {
-    socket.volatile.emit('input', inputState);
+    socket.emit('input', inputState);
 }
 
 // =========================================
