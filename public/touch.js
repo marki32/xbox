@@ -67,6 +67,7 @@ function handleJoystick(e) {
     const vx = Math.cos(angle) * visualDist;
     const vy = Math.sin(angle) * visualDist;
 
+    // Use translate from center
     joystickStick.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`;
 
     emitState();
@@ -76,7 +77,7 @@ function resetJoystick(e) {
     if (e) e.preventDefault();
     inputState.ls.x = 0;
     inputState.ls.y = 0;
-    joystickStick.style.transform = `translate(-50%, -50%)`;
+    joystickStick.style.transform = 'translate(-50%, -50%)';
     emitState();
 }
 
