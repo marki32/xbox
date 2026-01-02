@@ -123,7 +123,7 @@
             <!-- RIGHT SIDE: Face Buttons + Aim Zone -->
             <div class="right-zone" id="right-zone">
                 <!-- Face Buttons Diamond -->
-                <div class="face-buttons">
+                <div class="face-buttons" id="face-buttons">
                     <button class="face-btn y" data-key="y">
                         <span>Y</span>
                     </button>
@@ -141,23 +141,63 @@
                 <!-- R3 Button -->
                 <button class="stick-click r3" data-key="r3">R3</button>
 
-                <!-- Aim Hint -->
-                <div class="aim-hint">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                        <circle cx="12" cy="12" r="10" />
-                        <circle cx="12" cy="12" r="3" />
-                        <line x1="12" y1="2" x2="12" y2="6" />
-                        <line x1="12" y1="18" x2="12" y2="22" />
-                        <line x1="2" y1="12" x2="6" y2="12" />
-                        <line x1="18" y1="12" x2="22" y2="12" />
+                <!-- Aim Crosshair (follows finger) -->
+                <div class="aim-crosshair" id="aim-crosshair">
+                    <svg viewBox="0 0 60 60" fill="none" stroke="#ff4444" stroke-width="2">
+                        <circle cx="30" cy="30" r="20" opacity="0.5" />
+                        <circle cx="30" cy="30" r="5" />
+                        <line x1="30" y1="5" x2="30" y2="15" />
+                        <line x1="30" y1="45" x2="30" y2="55" />
+                        <line x1="5" y1="30" x2="15" y2="30" />
+                        <line x1="45" y1="30" x2="55" y2="30" />
                     </svg>
-                    <span>Drag to Aim</span>
                 </div>
             </div>
         </div>
 
         <!-- Connection Status -->
         <div id="status">Connecting...</div>
+
+        <!-- Settings Button -->
+        <button id="settings-btn" class="settings-btn" onclick="toggleSettings()">⚙️</button>
+
+        <!-- Settings Panel -->
+        <div id="settings-panel" class="settings-panel" style="display:none">
+            <div class="settings-header">
+                <span>⚙️ Settings</span>
+                <button onclick="toggleSettings()">✕</button>
+            </div>
+
+            <div class="settings-content">
+                <div class="setting-item">
+                    <label>Joystick Size</label>
+                    <input type="range" id="joystick-size" min="80" max="180" value="130"
+                        oninput="updateJoystickSize(this.value)">
+                    <span id="joystick-size-val">130px</span>
+                </div>
+
+                <div class="setting-item">
+                    <label>Button Size</label>
+                    <input type="range" id="button-size" min="40" max="80" value="55"
+                        oninput="updateButtonSize(this.value)">
+                    <span id="button-size-val">55px</span>
+                </div>
+
+                <div class="setting-item">
+                    <label>Aim Sensitivity</label>
+                    <input type="range" id="aim-sensitivity" min="1" max="20" value="10"
+                        oninput="updateAimSensitivity(this.value)">
+                    <span id="aim-sens-val">10</span>
+                </div>
+
+                <div class="setting-item">
+                    <label>Show Crosshair</label>
+                    <input type="checkbox" id="show-crosshair" checked onchange="toggleCrosshair(this.checked)">
+                </div>
+
+                <button class="reset-btn" onclick="resetSettings()">Reset to Default</button>
+            </div>
+        </div>
     </div>
 
     <script src="touch.js"></script>

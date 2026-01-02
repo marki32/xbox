@@ -81,10 +81,12 @@ function resetJoystick(e) {
 }
 
 // =========================================
-// RIGHT STICK (AIM) LOGIC
+// RIGHT STICK (AIM) LOGIC WITH CROSSHAIR
 // =========================================
 const rightZone = document.getElementById('right-zone');
+const aimCrosshair = document.getElementById('aim-crosshair');
 let rsOrigin = null; // {x, y} of touch start
+let aimSensitivity = 10; // Default sensitivity (1-20)
 
 rightZone.addEventListener('touchstart', handleAimStart, { passive: false });
 rightZone.addEventListener('touchmove', handleAimMove, { passive: false });
@@ -92,18 +94,22 @@ rightZone.addEventListener('touchend', resetAim, { passive: false });
 rightZone.addEventListener('touchcancel', resetAim, { passive: false });
 
 function handleAimStart(e) {
-    if (e.target.tagName === 'BUTTON' || e.target.closest('.menu-btn')) return;
+    if (e.target.tagName === 'BUTTON' || e.target.closest('.menu-btn') || e.target.closest('.face-btn')) return;
 
     e.preventDefault();
     const touch = e.changedTouches[0];
     rsOrigin = { x: touch.clientX, y: touch.clientY };
+
+    // Show and position crosshair
+    if (aimCrosshair) {
+        aimCrosshair.classList.add('active');
+        moveCrosshair(touch.clientX, touch.clientY);
+    }
 }
 
 function handleAimMove(e) {
     if (!rsOrigin) return;
-    // Find the touch that started this (simple check for now)
-    // In multi-touch, we should track ID, but for now simple works
-    if (e.target.tagName === 'BUTTON') return;
+    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-btn')) return;
 
     e.preventDefault();
     const touch = e.changedTouches[0];
@@ -111,17 +117,8 @@ function handleAimMove(e) {
     const dx = touch.clientX - rsOrigin.x;
     const dy = touch.clientY - rsOrigin.y;
 
-    // Sensitivity factor
-    const sensitivity = 0.005;
-
-    // For aim, we want continuous value or delta?
-    // Xbox sticks are position-based. 
-    // If we want "look around", we should output a value while dragging.
-    // Let's implement "Virtual Stick" behavior:
-    // Drag distance from start point = stick magnitude.
-
-    // Max drag distance for full stick tilt
-    const maxDrag = 100;
+    // Max drag distance scaled by sensitivity
+    const maxDrag = 150 - (aimSensitivity * 5); // Lower = more sensitive
 
     let rx = dx / maxDrag;
     let ry = dy / maxDrag;
@@ -133,16 +130,34 @@ function handleAimMove(e) {
     inputState.rs.x = rx;
     inputState.rs.y = ry;
 
+    // Move crosshair
+    if (aimCrosshair) {
+        moveCrosshair(touch.clientX, touch.clientY);
+    }
+
     emitState();
 }
 
-function resetAim(e) {
-    if (e.target.tagName === 'BUTTON') return; // Don't reset if button event
+function moveCrosshair(x, y) {
+    if (!aimCrosshair) return;
+    const rect = rightZone.getBoundingClientRect();
+    // Position relative to rightZone, centered on finger
+    aimCrosshair.style.left = (x - rect.left - 30) + 'px';
+    aimCrosshair.style.top = (y - rect.top - 30) + 'px';
+}
 
-    // Only reset if it was the aim touch
+function resetAim(e) {
+    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-btn')) return;
+
     rsOrigin = null;
     inputState.rs.x = 0;
     inputState.rs.y = 0;
+
+    // Hide crosshair
+    if (aimCrosshair) {
+        aimCrosshair.classList.remove('active');
+    }
+
     emitState();
 }
 
@@ -262,3 +277,122 @@ if (steerRight) {
     }, { passive: false });
 }
 
+// =========================================
+// SETTINGS PANEL & CUSTOMIZATION
+// =========================================
+const settingsPanel = document.getElementById('settings-panel');
+const joystickSizeSlider = document.getElementById('joystick-size');
+const buttonSizeSlider = document.getElementById('button-size');
+const aimSensSlider = document.getElementById('aim-sensitivity');
+const showCrosshairCheck = document.getElementById('show-crosshair');
+const faceButtons = document.getElementById('face-buttons');
+
+// Toggle Settings Panel
+function toggleSettings() {
+    if (settingsPanel) {
+        settingsPanel.style.display = settingsPanel.style.display === 'none' ? 'block' : 'none';
+    }
+}
+window.toggleSettings = toggleSettings;
+
+// Update Joystick Size
+function updateJoystickSize(value) {
+    if (joystickBase) {
+        joystickBase.style.width = value + 'px';
+        joystickBase.style.height = value + 'px';
+    }
+    const stickSize = Math.round(value * 0.46);
+    if (joystickStick) {
+        joystickStick.style.width = stickSize + 'px';
+        joystickStick.style.height = stickSize + 'px';
+    }
+    document.getElementById('joystick-size-val').textContent = value + 'px';
+    saveSettings();
+}
+window.updateJoystickSize = updateJoystickSize;
+
+// Update Button Size
+function updateButtonSize(value) {
+    if (faceButtons) {
+        const btns = faceButtons.querySelectorAll('.face-btn');
+        btns.forEach(btn => {
+            btn.style.width = value + 'px';
+            btn.style.height = value + 'px';
+            btn.style.fontSize = Math.round(value * 0.4) + 'px';
+        });
+        faceButtons.style.gridTemplateColumns = `${value}px ${value}px ${value}px`;
+        faceButtons.style.gridTemplateRows = `${value}px ${value}px ${value}px`;
+    }
+    document.getElementById('button-size-val').textContent = value + 'px';
+    saveSettings();
+}
+window.updateButtonSize = updateButtonSize;
+
+// Update Aim Sensitivity
+function updateAimSensitivity(value) {
+    aimSensitivity = parseInt(value);
+    document.getElementById('aim-sens-val').textContent = value;
+    saveSettings();
+}
+window.updateAimSensitivity = updateAimSensitivity;
+
+// Toggle Crosshair Visibility
+function toggleCrosshair(show) {
+    if (aimCrosshair) {
+        aimCrosshair.style.display = show ? 'block' : 'none';
+    }
+    saveSettings();
+}
+window.toggleCrosshair = toggleCrosshair;
+
+// Reset to Defaults
+function resetSettings() {
+    if (joystickSizeSlider) joystickSizeSlider.value = 130;
+    if (buttonSizeSlider) buttonSizeSlider.value = 55;
+    if (aimSensSlider) aimSensSlider.value = 10;
+    if (showCrosshairCheck) showCrosshairCheck.checked = true;
+
+    updateJoystickSize(130);
+    updateButtonSize(55);
+    updateAimSensitivity(10);
+    toggleCrosshair(true);
+
+    localStorage.removeItem('xboxControllerSettings');
+    if (navigator.vibrate) navigator.vibrate([30, 30, 30]);
+}
+window.resetSettings = resetSettings;
+
+// Save Settings to localStorage
+function saveSettings() {
+    const settings = {
+        joystickSize: joystickSizeSlider?.value || 130,
+        buttonSize: buttonSizeSlider?.value || 55,
+        aimSensitivity: aimSensSlider?.value || 10,
+        showCrosshair: showCrosshairCheck?.checked ?? true
+    };
+    localStorage.setItem('xboxControllerSettings', JSON.stringify(settings));
+}
+
+// Load Settings from localStorage
+function loadSettings() {
+    try {
+        const saved = localStorage.getItem('xboxControllerSettings');
+        if (saved) {
+            const settings = JSON.parse(saved);
+            if (joystickSizeSlider) joystickSizeSlider.value = settings.joystickSize;
+            if (buttonSizeSlider) buttonSizeSlider.value = settings.buttonSize;
+            if (aimSensSlider) aimSensSlider.value = settings.aimSensitivity;
+            if (showCrosshairCheck) showCrosshairCheck.checked = settings.showCrosshair;
+
+            updateJoystickSize(settings.joystickSize);
+            updateButtonSize(settings.buttonSize);
+            updateAimSensitivity(settings.aimSensitivity);
+            toggleCrosshair(settings.showCrosshair);
+        }
+    } catch (e) {
+        console.log('Could not load settings:', e);
+    }
+}
+
+// Load settings on startup
+loadSettings();
