@@ -76,51 +76,52 @@ function resetJoystick(e) {
 }
 
 // =========================================
-// RIGHT STICK (AIM) LOGIC
+// RIGHT STICK (AIM) JOYSTICK - Visual like left!
 // =========================================
-const rightZone = document.getElementById('right-zone');
-let rsOrigin = null;
+const rightJoystickBase = document.getElementById('right-joystick-base');
+const rightJoystickStick = document.getElementById('right-joystick-stick');
 
-rightZone.addEventListener('touchstart', handleAimStart, { passive: false });
-rightZone.addEventListener('touchmove', handleAimMove, { passive: false });
-rightZone.addEventListener('touchend', resetAim, { passive: false });
-rightZone.addEventListener('touchcancel', resetAim, { passive: false });
+const rsMaxVisualDist = 35;
+const rsMaxInputRadius = 65;
 
-function handleAimStart(e) {
-    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-btn')) return;
+rightJoystickBase.addEventListener('touchstart', handleRightJoystick, { passive: false });
+rightJoystickBase.addEventListener('touchmove', handleRightJoystick, { passive: false });
+rightJoystickBase.addEventListener('touchend', resetRightJoystick, { passive: false });
+rightJoystickBase.addEventListener('touchcancel', resetRightJoystick, { passive: false });
+
+function handleRightJoystick(e) {
     e.preventDefault();
-    const touch = e.changedTouches[0];
-    rsOrigin = { x: touch.clientX, y: touch.clientY };
-}
+    const touch = e.targetTouches[0];
+    if (!touch) return;
 
-function handleAimMove(e) {
-    if (!rsOrigin) return;
-    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-btn')) return;
+    const rect = rightJoystickBase.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
 
-    e.preventDefault();
-    const touch = e.changedTouches[0];
+    const dx = touch.clientX - centerX;
+    const dy = touch.clientY - centerY;
 
-    const dx = touch.clientX - rsOrigin.x;
-    const dy = touch.clientY - rsOrigin.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    const angle = Math.atan2(dy, dx);
 
-    const maxDrag = 100;
+    const normalizedDist = Math.min(distance / rsMaxInputRadius, 1.0);
 
-    let rx = dx / maxDrag;
-    let ry = dy / maxDrag;
+    inputState.rs.x = Math.cos(angle) * normalizedDist;
+    inputState.rs.y = Math.sin(angle) * normalizedDist;
 
-    rx = Math.max(-1, Math.min(1, rx));
-    ry = Math.max(-1, Math.min(1, ry));
+    const visualDist = Math.min(distance, rsMaxVisualDist);
+    const vx = Math.cos(angle) * visualDist;
+    const vy = Math.sin(angle) * visualDist;
 
-    inputState.rs.x = rx;
-    inputState.rs.y = ry;
+    rightJoystickStick.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`;
     emitState();
 }
 
-function resetAim(e) {
-    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-btn')) return;
-    rsOrigin = null;
+function resetRightJoystick(e) {
+    if (e) e.preventDefault();
     inputState.rs.x = 0;
     inputState.rs.y = 0;
+    rightJoystickStick.style.transform = 'translate(-50%, -50%)';
     emitState();
 }
 
