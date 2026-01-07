@@ -83,22 +83,32 @@
                     <button class="stick-click l3" data-key="l3">L3</button>
                 </div>
 
-                <!-- Drive Mode Controls (Steering Pad) -->
+                <!-- Drive Mode Controls (Tiered Steering) -->
                 <div class="drive-controls" id="drive-controls" style="display:none">
-                    <div class="steering-pad">
-                        <button class="steer-btn-small quick-left" id="q-steer-left">
-                            <span class="icon">◀◀</span>
+                    <!-- MAIN NORMAL STEERING (BIG) -->
+                    <div class="steer-normal-tier">
+                        <button class="steer-btn steer-large steer-left" id="steer-left">
+                            <span class="steer-arrow">◀</span>
+                            <span class="steer-label">NORMAL</span>
                         </button>
-                        <button class="steer-btn-small steer-left" id="steer-left">
-                            <span class="icon">◀</span>
-                        </button>
-                        <button class="steer-btn-small steer-right" id="steer-right">
-                            <span class="icon">▶</span>
-                        </button>
-                        <button class="steer-btn-small quick-right" id="q-steer-right">
-                            <span class="icon">▶▶</span>
+                        <button class="steer-btn steer-large steer-right" id="steer-right">
+                            <span class="steer-arrow">▶</span>
+                            <span class="steer-label">NORMAL</span>
                         </button>
                     </div>
+
+                    <!-- QUICK STEERING (SMALL - DOWN SIDE) -->
+                    <div class="steer-quick-tier">
+                        <button class="quick-btn-small quick-left" id="q-steer-left">
+                            <span class="quick-arrow">◀◀</span>
+                        </button>
+                        <button class="quick-btn-small quick-right" id="q-steer-right">
+                            <span class="quick-arrow">▶▶</span>
+                        </button>
+                    </div>
+
+                    <!-- Voice/L3 (Moved to bottom of controls) -->
+                    <button class="stick-click l3" data-key="l3" style="margin-top: 10px;">🔊</button>
                 </div>
 
                 <!-- D-Pad -->
