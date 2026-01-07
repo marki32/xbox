@@ -222,99 +222,62 @@ buttons.forEach(btn => {
 // =========================================
 // DRIVE MODE - SIMPLE LEFT/RIGHT BUTTONS
 // =========================================
+// =========================================
+// DRIVE MODE - 4-BUTTON STEERING PAD
+// =========================================
 let isDriveMode = false;
-let isSharpTurn = false; // Flag for sensitivity boost
 const driveControls = document.getElementById('drive-controls');
 const joystickContainer = document.getElementById('joystick-container');
 const modeToggle = document.getElementById('mode-toggle');
-const steerLeft = document.getElementById('steer-left');
-const steerRight = document.getElementById('steer-right');
-const sharpBtn = document.getElementById('sharp-turn');
 
-// Sharp Turn Handler
-if (sharpBtn) {
-    sharpBtn.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        isSharpTurn = true;
-        sharpBtn.classList.add('pressed');
-        if (navigator.vibrate) navigator.vibrate(10);
-    }, { passive: false });
-
-    sharpBtn.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        isSharpTurn = false;
-        sharpBtn.classList.remove('pressed');
-    }, { passive: false });
-}
+const btnSteerL = document.getElementById('steer-left');
+const btnSteerR = document.getElementById('steer-right');
+const btnQuickL = document.getElementById('q-steer-left');
+const btnQuickR = document.getElementById('q-steer-right');
 
 function toggleDriveMode() {
     isDriveMode = !isDriveMode;
-    isSharpTurn = false; // Reset on mode change
 
     if (isDriveMode) {
         if (joystickContainer) joystickContainer.style.display = 'none';
         if (driveControls) driveControls.style.display = 'flex';
         if (modeToggle) modeToggle.classList.add('drive-active');
         document.body.classList.add('drive-mode');
-        if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
     } else {
         if (joystickContainer) joystickContainer.style.display = 'flex';
         if (driveControls) driveControls.style.display = 'none';
         if (modeToggle) modeToggle.classList.remove('drive-active');
         document.body.classList.remove('drive-mode');
-        if (navigator.vibrate) navigator.vibrate(30);
         inputState.ls.x = 0;
         emitState();
     }
 }
 window.toggleDriveMode = toggleDriveMode;
 
-// Steer Left
-if (steerLeft) {
-    steerLeft.addEventListener('touchstart', (e) => {
+// Helper to attach steering logic
+function attachSteer(btn, value) {
+    if (!btn) return;
+    btn.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        inputState.ls.x = isSharpTurn ? -1 : -0.7;
+        inputState.ls.x = value;
         inputState.ls.y = 0;
-        steerLeft.classList.add('pressed');
-        emitState();
-        if (navigator.vibrate) navigator.vibrate(15);
-    }, { passive: false });
-
-    steerLeft.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        inputState.ls.x = 0;
-        steerLeft.classList.remove('pressed');
+        btn.classList.add('pressed');
         emitState();
     }, { passive: false });
 
-    steerLeft.addEventListener('touchcancel', () => {
+    const stop = (e) => {
+        if (e) e.preventDefault();
         inputState.ls.x = 0;
-        steerLeft.classList.remove('pressed');
+        btn.classList.remove('pressed');
         emitState();
-    }, { passive: false });
+    };
+
+    btn.addEventListener('touchend', stop, { passive: false });
+    btn.addEventListener('touchcancel', stop, { passive: false });
 }
 
-// Steer Right
-if (steerRight) {
-    steerRight.addEventListener('touchstart', (e) => {
-        e.preventDefault();
-        inputState.ls.x = isSharpTurn ? 1 : 0.7;
-        inputState.ls.y = 0;
-        steerRight.classList.add('pressed');
-        emitState();
-        if (navigator.vibrate) navigator.vibrate(15);
-    }, { passive: false });
-
-    steerRight.addEventListener('touchend', (e) => {
-        e.preventDefault();
-        inputState.ls.x = 0;
-        steerRight.classList.remove('pressed');
-        emitState();
-    }, { passive: false });
-
-    steerRight.addEventListener('touchcancel', () => {
-        inputState.ls.x = 0;
-        steerRight.classList.remove('pressed');
-        emitState();
-    }, { passive: false });
-}
+// Attach all 4 buttons
+attachSteer(btnSteerL, -0.7);
+attachSteer(btnSteerR, 0.7);
+attachSteer(btnQuickL, -1.0);
+attachSteer(btnQuickR, 1.0);
