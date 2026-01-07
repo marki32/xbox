@@ -545,58 +545,81 @@ body {
     left: 0;
     right: 0;
     display: flex;
+    flex-direction: column;
+    /* Vertical stack: Big on Top, Small on Bottom */
     justify-content: center;
     align-items: center;
+    gap: 15px;
 }
 
-.steering-pad {
+/* NORMAL TIER (BIG 120px) */
+.steer-normal-tier {
     display: flex;
-    gap: 12px;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 12px 20px;
-    border-radius: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    gap: 20px;
 }
 
-.steer-btn-small {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--bg-card);
-    border: 2px solid;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 900;
-    transition: all 0.1s ease;
-}
-
-.steer-btn-small .icon {
-    font-size: 20px;
-}
-
-/* Normal Steer (Orange) */
-.steer-left,
-.steer-right {
-    border-color: #ff9900;
+.steer-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 20px;
+    background: linear-gradient(145deg, rgba(40, 40, 50, 0.9) 0%, rgba(20, 20, 30, 0.95) 100%);
+    border: 3px solid rgba(255, 153, 0, 0.5);
     color: #ff9900;
-    box-shadow: 0 0 10px rgba(255, 153, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(255, 153, 0, 0.4);
 }
 
-/* Quick Turn (White/High Visibility) */
-.quick-left,
-.quick-right {
-    border-color: #ffffff;
+.steer-large .steer-arrow {
+    font-size: 36px;
+}
+
+.steer-large .steer-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* QUICK TIER (SMALL 55px - DOWN SIDE) */
+.steer-quick-tier {
+    display: flex;
+    gap: 120px;
+    /* Wide gap to place them under thumbs but distinct */
+    margin-top: 5px;
+}
+
+.quick-btn-small {
+    width: 55px;
+    height: 55px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #ffffff;
     color: #ffffff;
-    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.steer-btn-small:active,
-.steer-btn-small.pressed {
+.quick-arrow {
+    font-size: 18px;
+}
+
+/* Active/Pressed States */
+.steer-large:active,
+.steer-large.pressed {
+    transform: scale(0.95);
+    background: rgba(255, 153, 0, 0.3);
+    box-shadow: 0 0 30px rgba(255, 153, 0, 0.6);
+}
+
+.quick-btn-small:active,
+.quick-btn-small.pressed {
     transform: scale(0.9);
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+    background: rgba(255, 255, 255, 0.4);
 }
 
 .steer-left:active,
