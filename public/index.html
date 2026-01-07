@@ -54,6 +54,12 @@
                         <line x1="4" y1="18" x2="20" y2="18" />
                     </svg>
                 </button>
+
+                <!-- Mode Toggle Button (Moved to Center) -->
+                <button id="mode-toggle" class="mode-toggle-btn" onclick="toggleDriveMode()">
+                    <span class="mode-icon walk">🚶</span>
+                    <span class="mode-icon drive" style="display:none">🚗</span>
+                </button>
             </div>
 
             <div class="trigger-group right">
@@ -67,11 +73,7 @@
 
             <!-- LEFT SIDE: Joystick + D-Pad -->
             <div class="left-zone" id="left-zone">
-                <!-- Mode Toggle Button -->
-                <button id="mode-toggle" class="mode-toggle-btn" onclick="toggleDriveMode()">
-                    <span class="mode-icon walk">🚶</span>
-                    <span class="mode-icon drive" style="display:none">🚗</span>
-                </button>
+
 
                 <!-- Virtual Joystick (Walk Mode) -->
                 <div class="joystick-container" id="joystick-container">

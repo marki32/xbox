@@ -1,8 +1,6 @@
 const socket = io();
 
 const statusDiv = document.getElementById('status');
-const joystickStick = document.getElementById('joystick-stick');
-const joystickBase = document.getElementById('joystick-base');
 
 socket.on('connect', () => {
     statusDiv.textContent = 'Connected ✅';
@@ -29,99 +27,162 @@ function emitState() {
 }
 
 // =========================================
-// JOYSTICK LOGIC
+// FLOATING JOYSTICK LOGIC (Left & Right via Zones)
 // =========================================
 const maxVisualDist = 35;
 const maxInputRadius = 65;
 
-joystickBase.addEventListener('touchstart', handleJoystick, { passive: false });
-joystickBase.addEventListener('touchmove', handleJoystick, { passive: false });
-joystickBase.addEventListener('touchend', resetJoystick, { passive: false });
-joystickBase.addEventListener('touchcancel', resetJoystick, { passive: false });
+const leftZone = document.getElementById('left-zone');
+const rightZone = document.getElementById('right-zone');
 
-function handleJoystick(e) {
+const leftContainer = document.getElementById('joystick-container');
+const rightContainer = document.getElementById('right-joystick-container');
+
+const leftBase = document.getElementById('joystick-base');
+const rightBase = document.getElementById('right-joystick-base');
+
+const leftStick = document.getElementById('joystick-stick');
+const rightStick = document.getElementById('right-joystick-stick');
+
+// Track active touches
+let leftTouchId = null;
+let rightTouchId = null;
+let leftCenter = { x: 0, y: 0 };
+let rightCenter = { x: 0, y: 0 };
+
+// --- LEFT ZONE HANDLERS ---
+leftZone.addEventListener('touchstart', (e) => {
+    // Ignore if touching a specific button (like D-Pad)
+    if (e.target.tagName === 'BUTTON' || e.target.closest('.dpad')) return;
+
     e.preventDefault();
-    const touch = e.targetTouches[0];
-    if (!touch) return;
+    // Only accept one touch for stick
+    if (leftTouchId !== null) return;
 
-    const rect = joystickBase.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+    const touch = e.changedTouches[0];
+    leftTouchId = touch.identifier;
 
-    const dx = touch.clientX - centerX;
-    const dy = touch.clientY - centerY;
+    // Set Center
+    leftCenter = { x: touch.clientX, y: touch.clientY };
+
+    // Show Joystick at touch position
+    // We offset by half width/height to center it
+    // Base is approx 130px -> 65px offset
+    // But we position the CONTAINER. Container has L3 button too. 
+    // Let's position the BASE center at finger.
+    // Container top-left = finger - (base_width/2)
+
+    // We'll just position the container such that the stick area is under finger
+    // rect is expensive, let's just assume centering.
+    leftContainer.style.display = 'flex';
+    leftContainer.style.left = (touch.clientX - 65) + 'px';
+    leftContainer.style.top = (touch.clientY - 65) + 'px';
+
+    // Reset stick visual
+    leftStick.style.transform = 'translate(-50%, -50%)';
+
+    // Initial State = 0
+    inputState.ls.x = 0;
+    inputState.ls.y = 0;
+    emitState();
+}, { passive: false });
+
+leftZone.addEventListener('touchmove', (e) => {
+    if (leftTouchId === null) return;
+    e.preventDefault();
+
+    // Find our touch
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === leftTouchId) {
+            const touch = e.changedTouches[i];
+            updateJoystick(touch, leftCenter, leftStick, 'ls');
+            break;
+        }
+    }
+}, { passive: false });
+
+const endLeft = (e) => {
+    if (leftTouchId === null) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === leftTouchId) {
+            leftTouchId = null;
+            leftContainer.style.display = 'none';
+            inputState.ls.x = 0; inputState.ls.y = 0;
+            emitState();
+            break;
+        }
+    }
+};
+leftZone.addEventListener('touchend', endLeft);
+leftZone.addEventListener('touchcancel', endLeft);
+
+
+// --- RIGHT ZONE HANDLERS ---
+rightZone.addEventListener('touchstart', (e) => {
+    if (e.target.tagName === 'BUTTON' || e.target.closest('.face-buttons')) return;
+
+    e.preventDefault();
+    if (rightTouchId !== null) return;
+
+    const touch = e.changedTouches[0];
+    rightTouchId = touch.identifier;
+    rightCenter = { x: touch.clientX, y: touch.clientY };
+
+    rightContainer.style.display = 'flex';
+    rightContainer.style.left = (touch.clientX - 65) + 'px'; // Assuming same size
+    rightContainer.style.top = (touch.clientY - 65) + 'px';
+
+    rightStick.style.transform = 'translate(-50%, -50%)';
+    inputState.rs.x = 0; inputState.rs.y = 0;
+    emitState();
+}, { passive: false });
+
+rightZone.addEventListener('touchmove', (e) => {
+    if (rightTouchId === null) return;
+    e.preventDefault();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === rightTouchId) {
+            const touch = e.changedTouches[i];
+            updateJoystick(touch, rightCenter, rightStick, 'rs');
+            break;
+        }
+    }
+}, { passive: false });
+
+const endRight = (e) => {
+    if (rightTouchId === null) return;
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === rightTouchId) {
+            rightTouchId = null;
+            rightContainer.style.display = 'none';
+            inputState.rs.x = 0; inputState.rs.y = 0;
+            emitState();
+            break;
+        }
+    }
+};
+rightZone.addEventListener('touchend', endRight);
+rightZone.addEventListener('touchcancel', endRight);
+
+
+// --- SHARED CALC FUNCTION ---
+function updateJoystick(touch, center, stickElement, inputKey) {
+    const dx = touch.clientX - center.x;
+    const dy = touch.clientY - center.y;
 
     const distance = Math.sqrt(dx * dx + dy * dy);
     const angle = Math.atan2(dy, dx);
 
     const normalizedDist = Math.min(distance / maxInputRadius, 1.0);
 
-    inputState.ls.x = Math.cos(angle) * normalizedDist;
-    inputState.ls.y = Math.sin(angle) * normalizedDist;
+    inputState[inputKey].x = Math.cos(angle) * normalizedDist;
+    inputState[inputKey].y = Math.sin(angle) * normalizedDist;
 
     const visualDist = Math.min(distance, maxVisualDist);
     const vx = Math.cos(angle) * visualDist;
     const vy = Math.sin(angle) * visualDist;
 
-    joystickStick.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`;
-    emitState();
-}
-
-function resetJoystick(e) {
-    if (e) e.preventDefault();
-    inputState.ls.x = 0;
-    inputState.ls.y = 0;
-    joystickStick.style.transform = 'translate(-50%, -50%)';
-    emitState();
-}
-
-// =========================================
-// RIGHT STICK (AIM) JOYSTICK - Visual like left!
-// =========================================
-const rightJoystickBase = document.getElementById('right-joystick-base');
-const rightJoystickStick = document.getElementById('right-joystick-stick');
-
-const rsMaxVisualDist = 35;
-const rsMaxInputRadius = 65;
-
-rightJoystickBase.addEventListener('touchstart', handleRightJoystick, { passive: false });
-rightJoystickBase.addEventListener('touchmove', handleRightJoystick, { passive: false });
-rightJoystickBase.addEventListener('touchend', resetRightJoystick, { passive: false });
-rightJoystickBase.addEventListener('touchcancel', resetRightJoystick, { passive: false });
-
-function handleRightJoystick(e) {
-    e.preventDefault();
-    const touch = e.targetTouches[0];
-    if (!touch) return;
-
-    const rect = rightJoystickBase.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-
-    const dx = touch.clientX - centerX;
-    const dy = touch.clientY - centerY;
-
-    const distance = Math.sqrt(dx * dx + dy * dy);
-    const angle = Math.atan2(dy, dx);
-
-    const normalizedDist = Math.min(distance / rsMaxInputRadius, 1.0);
-
-    inputState.rs.x = Math.cos(angle) * normalizedDist;
-    inputState.rs.y = Math.sin(angle) * normalizedDist;
-
-    const visualDist = Math.min(distance, rsMaxVisualDist);
-    const vx = Math.cos(angle) * visualDist;
-    const vy = Math.sin(angle) * visualDist;
-
-    rightJoystickStick.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`;
-    emitState();
-}
-
-function resetRightJoystick(e) {
-    if (e) e.preventDefault();
-    inputState.rs.x = 0;
-    inputState.rs.y = 0;
-    rightJoystickStick.style.transform = 'translate(-50%, -50%)';
+    stickElement.style.transform = `translate(calc(-50% + ${vx}px), calc(-50% + ${vy}px))`;
     emitState();
 }
 

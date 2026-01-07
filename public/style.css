@@ -215,11 +215,17 @@ body {
 
 /* Joystick */
 .joystick-container {
-    position: relative;
-    display: flex;
+    position: absolute;
+    /* Floating! */
+    display: none;
+    /* Hidden until touch */
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    z-index: 50;
+    /* Above other things */
+    pointer-events: none;
+    /* Let touches pass through to zone handler initially */
 }
 
 #joystick-base {
@@ -432,7 +438,8 @@ body {
 
 /* Right Joystick (Aim) */
 .right-joystick {
-    position: relative;
+    /* Inherits .joystick-container styles (absolute, hidden) */
+    display: none;
 }
 
 #right-joystick-base {
@@ -483,22 +490,20 @@ body {
    ================================================ */
 
 /* Mode Toggle Button */
+/* Mode Toggle Button (Top Bar Version) */
 .mode-toggle-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    width: 50px;
-    height: 50px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: var(--bg-card);
     border: 2px solid var(--xbox-green);
     color: white;
-    font-size: 24px;
+    font-size: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    box-shadow: 0 0 15px rgba(16, 124, 16, 0.4);
+    box-shadow: 0 0 10px rgba(16, 124, 16, 0.4);
+    /* No absolute position anymore */
 }
 
 .mode-toggle-btn:active {
@@ -507,7 +512,7 @@ body {
 
 .mode-toggle-btn.drive-active {
     border-color: #ff9900;
-    box-shadow: 0 0 20px rgba(255, 153, 0, 0.5);
+    box-shadow: 0 0 15px rgba(255, 153, 0, 0.5);
     background: rgba(255, 153, 0, 0.2);
 }
 
