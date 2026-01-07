@@ -211,6 +211,8 @@ body {
     align-items: center;
     justify-content: space-around;
     padding-left: 20px;
+    position: relative;
+    /* For absolute D-Pad */
 }
 
 /* Joystick */
