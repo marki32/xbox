@@ -274,10 +274,9 @@ body {
 /* D-Pad */
 .dpad {
     position: absolute;
-    /* Move to specific spot */
-    top: 20px;
-    right: 30px;
-    /* Close to center status */
+    /* Positioned at bottom-right of zone */
+    bottom: 20px;
+    right: 20px;
     z-index: 60;
     /* Above floating zone */
 
