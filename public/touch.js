@@ -52,8 +52,10 @@ let rightCenter = { x: 0, y: 0 };
 
 // --- LEFT ZONE HANDLERS ---
 leftZone.addEventListener('touchstart', (e) => {
-    // Ignore if touching a specific button (like D-Pad)
-    if (e.target.tagName === 'BUTTON' || e.target.closest('.dpad')) return;
+    // Ignore if touching a specific button, D-Pad, or Drive Controls
+    if (e.target.tagName === 'BUTTON' ||
+        e.target.closest('.dpad') ||
+        e.target.closest('.drive-controls')) return;
 
     e.preventDefault();
     // Only accept one touch for stick
