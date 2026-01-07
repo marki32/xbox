@@ -273,17 +273,24 @@ body {
 
 /* D-Pad */
 .dpad {
+    position: absolute;
+    /* Move to specific spot */
+    top: 20px;
+    right: 30px;
+    /* Close to center status */
+    z-index: 60;
+    /* Above floating zone */
+
     display: grid;
     grid-template-areas:
         ". up ."
         "left center right"
         ". down .";
-    /* Smaller D-Pad */
-    grid-template-columns: 40px 40px 40px;
-    grid-template-rows: 40px 40px 40px;
+    /* Smaller D-Pad (35px) */
+    grid-template-columns: 35px 35px 35px;
+    grid-template-rows: 35px 35px 35px;
     gap: 2px;
-    /* Shift Right */
-    margin-left: 15px;
+    margin-left: 0;
 }
 
 .dpad-btn {
