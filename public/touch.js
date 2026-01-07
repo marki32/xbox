@@ -57,6 +57,9 @@ leftZone.addEventListener('touchstart', (e) => {
         e.target.closest('.dpad') ||
         e.target.closest('.drive-controls')) return;
 
+    // DISABLE FLOATING JOYSTICK IN DRIVE MODE
+    if (isDriveMode) return;
+
     e.preventDefault();
     // Only accept one touch for stick
     if (leftTouchId !== null) return;

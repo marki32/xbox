@@ -276,9 +276,12 @@ body {
         ". up ."
         "left center right"
         ". down .";
-    grid-template-columns: 45px 45px 45px;
-    grid-template-rows: 45px 45px 45px;
+    /* Smaller D-Pad */
+    grid-template-columns: 40px 40px 40px;
+    grid-template-rows: 40px 40px 40px;
     gap: 2px;
+    /* Shift Right */
+    margin-left: 15px;
 }
 
 .dpad-btn {
