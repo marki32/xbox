@@ -85,15 +85,28 @@
 
                 <!-- Drive Mode Controls (Hidden by Default) -->
                 <div class="drive-controls" id="drive-controls" style="display:none">
-                    <button class="steer-btn steer-left" id="steer-left">
-                        <span class="steer-arrow">◀</span>
-                        <span class="steer-label">LEFT</span>
-                    </button>
-                    <button class="steer-btn steer-right" id="steer-right">
-                        <span class="steer-arrow">▶</span>
-                        <span class="steer-label">RIGHT</span>
-                    </button>
-                    <button class="stick-click l3" data-key="l3">🔊</button>
+                    <div class="steer-group">
+                        <button class="steer-btn steer-left" id="steer-left">
+                            <span class="steer-arrow">◀</span>
+                            <span class="steer-label">LEFT</span>
+                        </button>
+                        <button class="steer-btn steer-right" id="steer-right">
+                            <span class="steer-arrow">▶</span>
+                            <span class="steer-label">RIGHT</span>
+                        </button>
+                    </div>
+
+                    <div class="drive-extra">
+                        <button class="drive-btn drift-btn" data-key="rb">
+                            <span class="btn-icon">💨</span>
+                            <span class="btn-label">DRIFT</span>
+                        </button>
+                        <button class="drive-btn sharp-btn" id="sharp-turn">
+                            <span class="btn-icon">⚡</span>
+                            <span class="btn-label">SHARP</span>
+                        </button>
+                        <button class="stick-click l3" data-key="l3">🔊</button>
+                    </div>
                 </div>
 
                 <!-- D-Pad -->

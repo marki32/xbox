@@ -223,14 +223,33 @@ buttons.forEach(btn => {
 // DRIVE MODE - SIMPLE LEFT/RIGHT BUTTONS
 // =========================================
 let isDriveMode = false;
+let isSharpTurn = false; // Flag for sensitivity boost
 const driveControls = document.getElementById('drive-controls');
 const joystickContainer = document.getElementById('joystick-container');
 const modeToggle = document.getElementById('mode-toggle');
 const steerLeft = document.getElementById('steer-left');
 const steerRight = document.getElementById('steer-right');
+const sharpBtn = document.getElementById('sharp-turn');
+
+// Sharp Turn Handler
+if (sharpBtn) {
+    sharpBtn.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        isSharpTurn = true;
+        sharpBtn.classList.add('pressed');
+        if (navigator.vibrate) navigator.vibrate(10);
+    }, { passive: false });
+
+    sharpBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        isSharpTurn = false;
+        sharpBtn.classList.remove('pressed');
+    }, { passive: false });
+}
 
 function toggleDriveMode() {
     isDriveMode = !isDriveMode;
+    isSharpTurn = false; // Reset on mode change
 
     if (isDriveMode) {
         if (joystickContainer) joystickContainer.style.display = 'none';
@@ -254,7 +273,7 @@ window.toggleDriveMode = toggleDriveMode;
 if (steerLeft) {
     steerLeft.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        inputState.ls.x = -0.7; // Reduced sensitivity for smoother driving
+        inputState.ls.x = isSharpTurn ? -1 : -0.7;
         inputState.ls.y = 0;
         steerLeft.classList.add('pressed');
         emitState();
@@ -279,7 +298,7 @@ if (steerLeft) {
 if (steerRight) {
     steerRight.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        inputState.ls.x = 0.7; // Reduced sensitivity for smoother driving
+        inputState.ls.x = isSharpTurn ? 1 : 0.7;
         inputState.ls.y = 0;
         steerRight.classList.add('pressed');
         emitState();

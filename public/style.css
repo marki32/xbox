@@ -539,11 +539,77 @@ body {
     display: block !important;
 }
 
-/* Drive Controls */
 .drive-controls {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    gap: 15px;
+}
+
+.steer-group {
+    display: flex;
     gap: 20px;
+}
+
+.drive-extra {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.drive-btn {
+    width: 70px;
+    height: 70px;
+    border-radius: 15px;
+    background: var(--bg-card);
+    border: 2px solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+}
+
+.drift-btn {
+    border-color: #0078d7;
+    /* Blue for drift/RB */
+    color: #0078d7;
+    box-shadow: 0 0 15px rgba(0, 120, 215, 0.3);
+}
+
+.sharp-btn {
+    border-color: #ffb900;
+    /* Yellow for sharp/quick */
+    color: #ffb900;
+    box-shadow: 0 0 15px rgba(255, 185, 0, 0.3);
+}
+
+.drive-btn:active,
+.drive-btn.pressed {
+    transform: scale(0.92);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.drift-btn:active,
+.drift-btn.pressed {
+    background: #0078d7;
+    color: white;
+}
+
+.sharp-btn:active,
+.sharp-btn.pressed {
+    background: #ffb900;
+    color: black;
+}
+
+.btn-icon {
+    font-size: 20px;
+}
+
+.btn-label {
+    font-size: 9px;
+    margin-top: 2px;
 }
 
 .steer-btn {
