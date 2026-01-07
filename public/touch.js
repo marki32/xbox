@@ -254,7 +254,7 @@ window.toggleDriveMode = toggleDriveMode;
 if (steerLeft) {
     steerLeft.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        inputState.ls.x = -1;
+        inputState.ls.x = -0.7; // Reduced sensitivity for smoother driving
         inputState.ls.y = 0;
         steerLeft.classList.add('pressed');
         emitState();
@@ -279,7 +279,7 @@ if (steerLeft) {
 if (steerRight) {
     steerRight.addEventListener('touchstart', (e) => {
         e.preventDefault();
-        inputState.ls.x = 1;
+        inputState.ls.x = 0.7; // Reduced sensitivity for smoother driving
         inputState.ls.y = 0;
         steerRight.classList.add('pressed');
         emitState();

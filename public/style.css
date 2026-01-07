@@ -359,18 +359,18 @@ body {
         ". y ."
         "x . b"
         ". a .";
-    grid-template-columns: 55px 55px 55px;
-    grid-template-rows: 55px 55px 55px;
-    gap: 5px;
+    grid-template-columns: 75px 75px 75px;
+    grid-template-rows: 75px 75px 75px;
+    gap: 8px;
 }
 
 .face-btn {
-    width: 55px;
-    height: 55px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
-    border: 3px solid;
+    border: 4px solid;
     font-weight: 800;
-    font-size: 22px;
+    font-size: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -547,8 +547,8 @@ body {
 }
 
 .steer-btn {
-    width: 90px;
-    height: 90px;
+    width: 120px;
+    height: 120px;
     border-radius: 20px;
     background: linear-gradient(145deg, rgba(40, 40, 50, 0.9) 0%, rgba(20, 20, 30, 0.95) 100%);
     border: 3px solid rgba(255, 153, 0, 0.5);
