@@ -235,16 +235,20 @@ const btnSteerR = document.getElementById('steer-right');
 const btnQuickL = document.getElementById('q-steer-left');
 const btnQuickR = document.getElementById('q-steer-right');
 
+const dpad = document.querySelector('.dpad');
+
 function toggleDriveMode() {
     isDriveMode = !isDriveMode;
 
     if (isDriveMode) {
         if (joystickContainer) joystickContainer.style.display = 'none';
+        if (dpad) dpad.style.display = 'none'; // Hide D-Pad
         if (driveControls) driveControls.style.display = 'flex';
         if (modeToggle) modeToggle.classList.add('drive-active');
         document.body.classList.add('drive-mode');
     } else {
         if (joystickContainer) joystickContainer.style.display = 'flex';
+        if (dpad) dpad.style.display = 'grid'; // Restore D-Pad
         if (driveControls) driveControls.style.display = 'none';
         if (modeToggle) modeToggle.classList.remove('drive-active');
         document.body.classList.remove('drive-mode');

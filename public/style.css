@@ -549,7 +549,8 @@ body {
     /* Vertical stack: Big on Top, Small on Bottom */
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    gap: 5px;
+    /* Reduced gap to pull elements closer */
 }
 
 /* NORMAL TIER (BIG 120px) */
@@ -587,7 +588,8 @@ body {
     display: flex;
     gap: 120px;
     /* Wide gap to place them under thumbs but distinct */
-    margin-top: 5px;
+    margin-top: -10px;
+    /* Pull UP closer to Normal buttons */
 }
 
 .quick-btn-small {
