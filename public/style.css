@@ -586,7 +586,8 @@ body {
 /* QUICK TIER (SMALL 55px - DOWN SIDE) */
 .steer-quick-tier {
     display: flex;
-    gap: 120px;
+    gap: 40px;
+    /* Brought closer together (was 120px) */
     /* Wide gap to place them under thumbs but distinct */
     margin-top: -10px;
     /* Pull UP closer to Normal buttons */
