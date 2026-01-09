@@ -21,10 +21,27 @@ const inputState = {
     buttons: {}
 };
 
-// Emit state to server
+// =========================================
+// OPTIMIZED INPUT LOOP (60 FPS)
+// Prevents packet flooding while keeping smooth controls
+// =========================================
+let lastEmittedJSON = '';
+
 function emitState() {
-    socket.emit('input', inputState);
+    // This function is now just a placeholder for immediate state updates
+    // The loop below handles the actual sending
 }
+
+setInterval(() => {
+    // Only send data if it has changed to save bandwidth
+    // But for joysticks, continuous updates are fine. 
+    // Let's send 60 times a second regardless to ensure smooth held inputs.
+    // Actually, sending only changes is better, but held buttons need to persist? 
+    // Socket.io ensures delivery. We just need to stop flooding.
+
+    // Simple 60Hz emit
+    socket.emit('input', inputState);
+}, 16); // ~60 times per second
 
 // =========================================
 // FLOATING JOYSTICK LOGIC (Left & Right via Zones)
